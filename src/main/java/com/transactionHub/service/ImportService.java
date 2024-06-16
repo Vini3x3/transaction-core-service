@@ -11,7 +11,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 import java.io.InputStream;
 import java.util.Map;
-import java.util.Set;
 
 @ApplicationScoped
 public class ImportService {
@@ -19,7 +18,7 @@ public class ImportService {
     public void importCsv(AccountEnum accountEnum, InputStream inputStream, String filename) {
 
 
-        var extractor = new CsvExtractor("\\|", System.lineSeparator());
+        var extractor = new CsvExtractor();
         var mapperConfig = new TransactionMapperConfig(
                 "Date",
                 "Transaction Details",
@@ -44,7 +43,6 @@ public class ImportService {
     }
 
     public void importExcel(AccountEnum accountEnum, InputStream inputStream, String filename) {
-
 
 
     }
