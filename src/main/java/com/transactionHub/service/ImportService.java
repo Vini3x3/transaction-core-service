@@ -9,10 +9,10 @@ import com.transactionHub.transactionProcessor.extractor.Extractor;
 import com.transactionHub.transactionProcessor.extractor.csv.CsvExtractor;
 import com.transactionHub.transactionProcessor.extractor.excel.ExcelExtractor;
 import com.transactionHub.transactionProcessor.mapper.transaction.TransactionMapper;
-import com.transactionHub.transactionProcessor.mapper.transaction.TransactionMapperConfig;
 import com.transactionHub.transactionProcessor.modifier.Tagger;
 import com.transactionHub.transactionProcessor.pipeline.ImportPipeline;
 import com.transactionHub.transactionProcessor.pipeline.MergePipeline;
+import com.transactionHub.util.config.ImportConfig;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -26,55 +26,45 @@ public class ImportService {
     @Inject
     TransactionRepository repository;
 
-    public void importCsv(AccountEnum accountEnum, InputStream inputStream, String filename) {
+    @Inject
+    ImportConfig importConfig;
 
+    public void importCsv(AccountEnum account, InputStream inputStream, String filename) {
         var extractor = new CsvExtractor();
-        var mapperConfig = new TransactionMapperConfig(
-                "Date",
-                "Transaction Details",
-                "Withdrawal",
-                "Deposit",
-                "Balance in Original Currency",
-                accountEnum,
-                "yyyy/MM/dd"
-        );
-        var taggerConfig = new HashMap<String, Set<String>>();
-
-        importData(inputStream, filename, extractor, mapperConfig, taggerConfig);
-
+        importData(inputStream, filename, extractor, account);
     }
 
     public void importExcel(AccountEnum accountEnum, InputStream inputStream, String filename) {
-
         var extractor = new ExcelExtractor();
-        var mapperConfig = new TransactionMapperConfig(
-                "Date",
-                "Transaction Details",
-                "Withdrawal",
-                "Deposit",
-                "Balance in Original Currency",
-                accountEnum,
-                "yyyy/MM/dd"
-        );
-        var taggerConfig = new HashMap<String, Set<String>>();
-
-        importData(inputStream, filename, extractor, mapperConfig, taggerConfig);
-
+        importData(inputStream, filename, extractor, accountEnum);
     }
 
-    public void importData(InputStream inputStream, String filename, Extractor extractor, TransactionMapperConfig mapperConfig, Map<String, Set<String>> taggerConfig) {
-
-        var mapper = new TransactionMapper(mapperConfig);
-        var tagger = new Tagger(taggerConfig);
-        var importPipeline = new ImportPipeline(extractor, mapper, tagger);
-        var importTransactions = importPipeline.importData(inputStream, filename);
-
+    public void importData(InputStream inputStream, String filename, Extractor extractor, AccountEnum account) {
+        var importTransactions = parseData(inputStream, filename, extractor, importConfig.account().get(account));
         var mergedTransactions = mergeVirtualTransaction(importTransactions);
+
         var entities = mergedTransactions.stream()
                 .map(TransactionTranslator::mapToEntity).toList();
 
         repository.persistOrUpdate(entities);
 
+    }
+
+    protected List<Transaction> parseData(InputStream inputStream, String filename, Extractor extractor, ImportConfig.Pipeline pipelineConfig) {
+        Map<String, Set<String>> taggerConfig = pipelineConfig.taggerConfig();
+        ImportConfig.MapperConfig mapperConfig = pipelineConfig.mapperConfig();
+        var mapper = new TransactionMapper(
+                mapperConfig.dateHeader(),
+                mapperConfig.descriptionHeader(),
+                mapperConfig.withdrawalHeader(),
+                mapperConfig.depositHeader(),
+                mapperConfig.balanceHeader(),
+                mapperConfig.account(),
+                mapperConfig.datePattern()
+        );
+        var tagger = new Tagger(taggerConfig);
+        var importPipeline = new ImportPipeline(extractor, mapper, tagger);
+        return importPipeline.importData(inputStream, filename);
     }
 
     protected List<Transaction> mergeVirtualTransaction(List<Transaction> importTransactions) {
