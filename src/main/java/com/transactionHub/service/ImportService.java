@@ -85,6 +85,19 @@ public class ImportService {
             return importTransactions;
         }
 
+        var toBeDeleted = existingTransactions.stream().filter(o -> {
+            for (var t: importTransactions) {
+                if (o.getDate().equals(t.getDate()) & o.getOffset().equals(t.getOffset()) && o.getAccount().equals(t.getAccount())) {
+                    return false;
+                }
+            }
+            return true;
+        }).toList();
+
+        for (var t: toBeDeleted) {
+            repository.delete(TransactionTranslator.mapToEntity(t));
+        }
+
         var virtualTransactions = existingTransactions.stream().filter(o -> o.getTags().contains(TagType.VIRTUAL)).toList();
 
         return new MergePipeline().mergeData(importTransactions, virtualTransactions);
