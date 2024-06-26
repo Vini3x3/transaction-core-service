@@ -3,12 +3,15 @@ package com.transactionHub.service;
 import com.transactionHub.entity.TransactionTranslator;
 import com.transactionHub.repository.TransactionRepository;
 import com.transactionHub.transactionCoreLibrary.constant.AccountEnum;
+import com.transactionHub.transactionCoreLibrary.constant.TagConstant;
 import com.transactionHub.transactionCoreLibrary.constant.TagType;
+import com.transactionHub.transactionCoreLibrary.domain.SystemTag;
 import com.transactionHub.transactionCoreLibrary.domain.Transaction;
 import com.transactionHub.transactionProcessor.extractor.Extractor;
 import com.transactionHub.transactionProcessor.extractor.csv.CsvExtractor;
 import com.transactionHub.transactionProcessor.extractor.excel.ExcelExtractor;
 import com.transactionHub.transactionProcessor.mapper.transaction.TransactionMapper;
+import com.transactionHub.transactionProcessor.modifier.SystemTagger;
 import com.transactionHub.transactionProcessor.modifier.Tagger;
 import com.transactionHub.transactionProcessor.pipeline.ImportPipeline;
 import com.transactionHub.transactionProcessor.pipeline.MergePipeline;
@@ -63,7 +66,8 @@ public class ImportService {
                 mapperConfig.datePattern()
         );
         var tagger = new Tagger(taggerConfig);
-        var importPipeline = new ImportPipeline(extractor, mapper, tagger);
+        var systemTagger = new SystemTagger(pipelineConfig.systemTaggerConfig());
+        var importPipeline = new ImportPipeline(extractor, mapper, tagger, systemTagger);
         return importPipeline.importData(inputStream, filename);
     }
 
@@ -98,7 +102,7 @@ public class ImportService {
             repository.delete(TransactionTranslator.mapToEntity(t));
         }
 
-        var virtualTransactions = existingTransactions.stream().filter(o -> o.getTags().contains(TagType.VIRTUAL)).toList();
+        var virtualTransactions = existingTransactions.stream().filter(o -> o.getTags().contains(TagConstant.VIRTUAL)).toList();
 
         return new MergePipeline().mergeData(importTransactions, virtualTransactions);
     }
