@@ -3,6 +3,7 @@ package com.transactionHub.service;
 import com.transactionHub.entity.TransactionTranslator;
 import com.transactionHub.repository.TransactionRepository;
 import com.transactionHub.transactionCoreLibrary.constant.AccountEnum;
+import com.transactionHub.transactionCoreLibrary.constant.TagConstant;
 import com.transactionHub.transactionCoreLibrary.constant.TagType;
 import com.transactionHub.transactionCoreLibrary.domain.Transaction;
 import com.transactionHub.transactionProcessor.extractor.Extractor;
@@ -98,7 +99,7 @@ public class ImportService {
             repository.delete(TransactionTranslator.mapToEntity(t));
         }
 
-        var virtualTransactions = existingTransactions.stream().filter(o -> o.getTags().contains(TagType.VIRTUAL)).toList();
+        var virtualTransactions = existingTransactions.stream().filter(o -> o.getTags().contains(TagConstant.VIRTUAL)).toList();
 
         return new MergePipeline().mergeData(importTransactions, virtualTransactions);
     }
