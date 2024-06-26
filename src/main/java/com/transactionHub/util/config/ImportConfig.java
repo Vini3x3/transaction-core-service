@@ -13,6 +13,8 @@ public interface ImportConfig {
     interface Pipeline {
         Map<String, Set<String>> taggerConfig();
 
+        Map<String, Map<String, Set<String>>> systemTaggerConfig();
+
         MapperConfig mapperConfig();
     }
 
