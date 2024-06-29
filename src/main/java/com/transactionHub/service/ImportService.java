@@ -4,8 +4,6 @@ import com.transactionHub.entity.TransactionTranslator;
 import com.transactionHub.repository.TransactionRepository;
 import com.transactionHub.transactionCoreLibrary.constant.AccountEnum;
 import com.transactionHub.transactionCoreLibrary.constant.TagConstant;
-import com.transactionHub.transactionCoreLibrary.constant.TagType;
-import com.transactionHub.transactionCoreLibrary.domain.SystemTag;
 import com.transactionHub.transactionCoreLibrary.domain.Transaction;
 import com.transactionHub.transactionProcessor.extractor.Extractor;
 import com.transactionHub.transactionProcessor.extractor.csv.CsvExtractor;
@@ -80,7 +78,7 @@ public class ImportService {
         Date startDate = importTransactions.getFirst().getDate();
         Date endDate = importTransactions.getLast().getDate();
 
-        var existingTransactions = repository.findTransactionByDate(startDate, endDate, account)
+        var existingTransactions = repository.findTransactionsByDate(startDate, endDate, account)
                 .stream()
                 .map(TransactionTranslator::mapToDomain)
                 .toList();

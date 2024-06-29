@@ -23,7 +23,7 @@ public class Transaction  {
     public Map<String, String> metas;
 
 
-    public static class CompositeId {
+    public static class CompositeId implements Comparable<CompositeId>{
         public Date date;
         public int offset;
         public AccountEnum account;
@@ -41,6 +41,17 @@ public class Transaction  {
         @Override
         public int hashCode() {
             return Objects.hash(date, offset, account);
+        }
+
+        @Override
+        public int compareTo(CompositeId o) {
+            if (this.date.compareTo(o.date) != 0) {
+                return this.date.compareTo(o.date);
+            }
+            if (this.offset != o.offset) {
+                return Integer.compare(this.offset, o.offset);
+            }
+            return this.account.compareTo(o.account);
         }
     }
 
