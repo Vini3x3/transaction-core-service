@@ -39,6 +39,11 @@ public class Transaction  {
         }
 
         @Override
+        public String toString() {
+            return account + "_" + date.toString() + "_" + account;
+        }
+
+        @Override
         public int hashCode() {
             return Objects.hash(date, offset, account);
         }
