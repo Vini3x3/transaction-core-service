@@ -1,6 +1,6 @@
 package com.transactionHub.service;
 
-import com.transactionHub.entity.TransactionTranslator;
+import com.transactionHub.util.helper.TransactionTranslator;
 import com.transactionHub.repository.TransactionRepository;
 import com.transactionHub.transactionCoreLibrary.constant.AccountEnum;
 import com.transactionHub.transactionCoreLibrary.domain.Transaction;
