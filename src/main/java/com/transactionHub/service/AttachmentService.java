@@ -1,30 +1,31 @@
 package com.transactionHub.service;
 
-import com.transactionHub.transactionCoreLibrary.constant.AccountEnum;
+import com.transactionHub.entity.Attachment;
+import com.transactionHub.repository.AttachmentRepository;
+import com.transactionHub.repository.TransactionRepository;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import java.io.InputStream;
-import java.util.Date;
 import java.util.Map;
 
 @ApplicationScoped
 public class AttachmentService {
 
-    public byte[] get(String attachmentId) {
-        return null;
-    }
+    @Inject
+    AttachmentRepository attachmentRepository;
 
-    public Map<String, String> getMeta(String attachmentId) {
-        return null;
+    public Attachment get(String attachmentId) {
+        return attachmentRepository.download(attachmentId);
     }
 
     // return attachmentId after save
-    public String save(Date date, int offset, AccountEnum account, InputStream inputStream, String filename) {
-        return "";
+    public String save(Map<String, Object> meta, InputStream inputStream, String filename) {
+        return attachmentRepository.save(meta, inputStream, filename);
     }
 
-    public void delete(Date date, int offset, AccountEnum account, String attachmentId) {
-
+    public void delete(String attachmentId) {
+        attachmentRepository.delete(attachmentId);
     }
 
 }

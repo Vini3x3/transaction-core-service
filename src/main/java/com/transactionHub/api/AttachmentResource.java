@@ -1,14 +1,16 @@
 package com.transactionHub.api;
 
-import com.transactionHub.service.AttachmentService;
+import com.transactionHub.entity.Attachment;
+import com.transactionHub.scenario.AttachmentScenario;
 import com.transactionHub.transactionCoreLibrary.constant.AccountEnum;
-import com.transactionHub.util.helper.WebHelper;
 import com.transactionHub.web.UploadItemSchema;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.jboss.resteasy.reactive.RestForm;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
 
 import java.io.IOException;
@@ -19,23 +21,32 @@ import java.util.Date;
 public class AttachmentResource {
 
     @Inject
-    AttachmentService attachmentService;
+    AttachmentScenario attachmentScenario;
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response importAttachment(@QueryParam("date") Date date, @QueryParam("offset") Integer offset, @QueryParam("account") String account, @QueryParam("statement") @Schema(implementation = UploadItemSchema.class) FileUpload file) throws IOException {
+    public Response saveAttachment(@RestForm("date") Date date, @RestForm("offset") Integer offset, @RestForm("account") AccountEnum account, @RestForm("attachment") @Schema(implementation = UploadItemSchema.class) FileUpload file) throws IOException {
 
         var inputStream = Files.newInputStream(file.uploadedFile());
-        AccountEnum accountEnum = WebHelper.parseAccountEnum(account);
-
-        String attachmentId = attachmentService.save(date, offset, accountEnum, inputStream, file.fileName());
+        String attachmentId = attachmentScenario.saveAttachment(date, offset, account, inputStream, file.fileName());
 
         return Response.accepted().entity(attachmentId).build();
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @Path("/download/{attachmentId}")
+    public Response downloadAttachment(@PathParam("attachmentId") String attachmentId) {
+        Attachment attachment = attachmentScenario.downloadAttachment(attachmentId);
+        return Response.ok(attachment.getContent())
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + attachment.getFilename())
+                .build();
     }
 
     @DELETE
     @Path("/{attachmentId}")
     public Response deleteAttachment(@PathParam("attachmentId") String attachmentId) {
+        attachmentScenario.deleteAttachment(attachmentId);
         return Response.accepted().build();
     }
 
