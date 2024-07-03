@@ -24,13 +24,8 @@ public class TagResource {
     }
 
     @POST
-    public void create(Tag tag) {
-        tagService.create(tag);
-    }
-
-    @PUT
-    public void update(Tag tag) {
-        tagService.update(tag);
+    public void createOrUpdate(Tag tag) {
+        tagService.createOrUpdte(tag);
     }
 
     @Path("{tag}")

@@ -13,9 +13,9 @@ public class TagService {
     @Inject
     TagRepository tagRepository;
 
-    public void create(Tag tag) {
+    public void createOrUpdte(Tag tag) {
         verifyTag(tag);
-        tagRepository.persist(TagTranslator.mapToEntity(tag));
+        tagRepository.persistOrUpdate(TagTranslator.mapToEntity(tag));
     }
 
     public Tag read(String tag) {
@@ -25,11 +25,6 @@ public class TagService {
         } else {
             return TagTranslator.mapToDomain(entity);
         }
-    }
-
-    public void update(Tag tag) {
-        verifyTag(tag);
-        tagRepository.update(TagTranslator.mapToEntity(tag));
     }
 
     public void delete(String tag) {
