@@ -1,4 +1,6 @@
-package com.transactionHub.entity;
+package com.transactionHub.util.helper;
+
+import com.transactionHub.entity.Transaction;
 
 public class TransactionTranslator {
 
@@ -37,4 +39,5 @@ public class TransactionTranslator {
 
         return entity;
     }
+
 }

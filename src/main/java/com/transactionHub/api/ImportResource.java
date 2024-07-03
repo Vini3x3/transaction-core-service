@@ -27,7 +27,7 @@ Technical Reference: https://stackoverflow.com/a/74466372
 public class ImportResource {
 
     @Inject
-    protected ImportService importService;
+    ImportService importService;
 
     @Path("statement/{type}/{account}")
     @POST

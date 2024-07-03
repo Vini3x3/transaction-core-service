@@ -16,7 +16,7 @@ import java.util.List;
 public class QueryResource {
 
     @Inject
-    protected QueryService queryService;
+    QueryService queryService;
 
     @Path("date-range")
     @GET
