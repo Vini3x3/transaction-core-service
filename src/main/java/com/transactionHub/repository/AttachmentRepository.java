@@ -1,6 +1,5 @@
 package com.transactionHub.repository;
 
-import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.GridFSBuckets;
@@ -14,7 +13,6 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -27,21 +25,9 @@ public class AttachmentRepository {
         var database = mongoClient.getDatabase("transaction-db");
         GridFSBucket gridFSBucket = GridFSBuckets.create(database);
 
-
         var options = new GridFSUploadOptions()
                 .metadata(new Document(meta));
         return gridFSBucket.uploadFromStream(filename, inputStream, options).toHexString();
-
-    }
-
-    public GridFSFile meta(String attachmentId) {
-        var database = mongoClient.getDatabase("transaction-db");
-        GridFSBucket gridFSBucket = GridFSBuckets.create(database);
-
-//        var query = (Bson) (new BsonObjectId(new ObjectId(attachmentId)));
-        var query = new BasicDBObject("_id", new ObjectId(attachmentId));
-
-        return gridFSBucket.find(query).first();
     }
 
 
