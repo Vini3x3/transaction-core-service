@@ -3,7 +3,6 @@ package com.transactionHub.scenario;
 import com.transactionHub.service.TagService;
 import com.transactionHub.transactionCoreLibrary.domain.Tag;
 import com.transactionHub.transactionCoreLibrary.util.TagPolicy;
-import com.transactionHub.util.helper.TagTranslator;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -19,7 +18,7 @@ public class TagScenario {
     }
 
     public Tag find(String tag) {
-        return tagService.read(tag);
+        return tagService.find(tag);
     }
 
     public void delete(String tag) {
