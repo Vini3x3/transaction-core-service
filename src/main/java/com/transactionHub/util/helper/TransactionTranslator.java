@@ -26,15 +26,10 @@ public class TransactionTranslator {
         entity.tags = transaction.getTags();
         entity.metas = transaction.getMeta();
 
-        List<Map<String, Object>> convertedMaps = new ArrayList<>();
-        for (var attachment: transaction.getAttachments()) {
-            convertedMaps.add(new HashMap<>(Map.of(
-                    "filename", attachment.getFilename(),
-                    "updateDate", attachment.getUpdateDate(),
-                    "attachmentId", attachment.getFileId()
-            )));
-        }
-        entity.attachments = convertedMaps;
+        entity.attachments = transaction.getAttachments()
+                .stream()
+                .map(TransactionTranslator::mapToFileInfoEntity)
+                .toList();
 
         return entity;
     }
@@ -60,11 +55,7 @@ public class TransactionTranslator {
         List<FileInfo> fileInfoList = new ArrayList<>();
         if (transaction.attachments != null && !transaction.attachments.isEmpty()) {
             for (var item : transaction.attachments) {
-                var fileInfo = new FileInfo();
-                fileInfo.setFilename((String) item.get("filename"));
-                fileInfo.setFileId((String) item.get("attachmentId"));
-                fileInfo.setUpdateDate((Date) item.get("updateDate"));
-                fileInfoList.add(fileInfo);
+                fileInfoList.add(mapToFileInfoDomain(item));
             }
         }
 
@@ -72,6 +63,22 @@ public class TransactionTranslator {
         entity.setMeta(transaction.metas);
 
         return entity;
+    }
+
+    public static FileInfo mapToFileInfoDomain(Map<String, Object> entity) {
+        var fileInfo = new FileInfo();
+        fileInfo.setFilename((String) entity.get("filename"));
+        fileInfo.setFileId((String) entity.get("attachmentId"));
+        fileInfo.setUpdateDate((Date) entity.get("updateDate"));
+        return fileInfo;
+    }
+
+    public static Map<String, Object> mapToFileInfoEntity(FileInfo fileInfo) {
+        return new HashMap<>(Map.of(
+                "filename", fileInfo.getFilename(),
+                "updateDate", fileInfo.getUpdateDate(),
+                "attachmentId", fileInfo.getFileId()
+        ));
     }
 
 }
