@@ -1,6 +1,9 @@
 greeting:
   message: "hello"
 quarkus:
+  http:
+    root-path: /api/v1
+    non-application-root-path: /q
   mongodb:
     connection-string: mongodb://localhost:27017
     database: transaction-db
