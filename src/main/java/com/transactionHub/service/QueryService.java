@@ -6,6 +6,7 @@ import com.transactionHub.transactionCoreLibrary.constant.AccountEnum;
 import com.transactionHub.transactionCoreLibrary.domain.Transaction;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.bson.types.ObjectId;
 
 import java.util.Date;
 import java.util.List;
@@ -22,5 +23,9 @@ public class QueryService {
                 .map(TransactionTranslator::mapToDomain)
                 .sorted()
                 .toList();
+    }
+
+    public Transaction findTransactionById(Date date, int offset, AccountEnum account) {
+        return TransactionTranslator.mapToDomain(repository.findById(date, offset, account));
     }
 }

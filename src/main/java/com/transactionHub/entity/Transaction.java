@@ -5,10 +5,7 @@ import io.quarkus.mongodb.panache.common.MongoEntity;
 import org.bson.codecs.pojo.annotations.BsonId;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @MongoEntity(collection="transactions")
 public class Transaction  {
@@ -21,6 +18,7 @@ public class Transaction  {
     public BigDecimal balance;
     public Set<String> tags;
     public Map<String, String> metas;
+    public List<Map<String, Object>> attachments;
 
 
     public static class CompositeId implements Comparable<CompositeId>{
@@ -36,6 +34,11 @@ public class Transaction  {
             return date.compareTo(that.date) == 0 &&
                     offset == that.offset &&
                     account.equals(that.account);
+        }
+
+        @Override
+        public String toString() {
+            return account + "_" + date.toString() + "_" + account;
         }
 
         @Override

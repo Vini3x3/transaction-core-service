@@ -25,4 +25,15 @@ public class TransactionRepository implements PanacheMongoRepository<Transaction
 
         return list(query, params);
     }
+
+    public Transaction findById(Date date, int offset, AccountEnum account) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("date", date);
+        params.put("offset", offset);
+        params.put("account", account);
+
+        String query = "{ '_id': {account: :account, date: :date, offset: :offset} }";
+
+        return find(query, params).firstResult();
+    }
 }
