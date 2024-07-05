@@ -11,6 +11,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -22,10 +23,11 @@ public class AttachmentRepository {
     @Inject
     MongoClient mongoClient;
 
-    public String save(Map<String, Object> meta, InputStream inputStream, String filename) {
-        var database = mongoClient.getDatabase("transaction-db");
-        GridFSBucket gridFSBucket = GridFSBuckets.create(database);
+    @ConfigProperty(name = "quarkus.mongodb.database", defaultValue = "")
+    String databaseName;
 
+    public String save(Map<String, Object> meta, InputStream inputStream, String filename) {
+        var gridFSBucket = getBucket();
         var options = new GridFSUploadOptions()
                 .metadata(new Document(meta));
         return gridFSBucket.uploadFromStream(filename, inputStream, options).toHexString();
@@ -33,9 +35,7 @@ public class AttachmentRepository {
 
 
     public Attachment download(String attachmentId) {
-        var database = mongoClient.getDatabase("transaction-db");
-        GridFSBucket gridFSBucket = GridFSBuckets.create(database);
-
+        var gridFSBucket = getBucket();
         try (GridFSDownloadStream downloadStream = gridFSBucket.openDownloadStream(new ObjectId(attachmentId))) {
             GridFSFile file = downloadStream.getGridFSFile();
             int fileLength = (int) file.getLength();
@@ -53,9 +53,13 @@ public class AttachmentRepository {
     }
 
     public void delete(String attachmentId) {
-        var database = mongoClient.getDatabase("transaction-db");
-        GridFSBucket gridFSBucket = GridFSBuckets.create(database);
+        var gridFSBucket = getBucket();
         gridFSBucket.delete(new ObjectId(attachmentId));
+    }
+
+    protected GridFSBucket getBucket() {
+        var database = mongoClient.getDatabase(databaseName);
+        return GridFSBuckets.create(database);
     }
 
 }
