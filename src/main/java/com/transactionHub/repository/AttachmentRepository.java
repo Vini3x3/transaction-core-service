@@ -13,6 +13,7 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -40,8 +41,13 @@ public class AttachmentRepository {
             int fileLength = (int) file.getLength();
             byte[] content = new byte[fileLength];
             downloadStream.read(content);
-            assert file.getMetadata() != null;
-            var meta = file.getMetadata().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+            Map<String, Object> meta;
+            if (file.getMetadata() != null) {
+                meta = file.getMetadata().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            } else {
+                meta = new HashMap<>();
+            }
             return new Attachment(file.getFilename(), file.getUploadDate(), meta, content);
         }
     }
