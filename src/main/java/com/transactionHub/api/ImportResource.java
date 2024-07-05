@@ -32,17 +32,16 @@ public class ImportResource {
     @Path("statement/{type}/{account}")
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response importStatement(@RestPath String type, @RestPath String account, @RestForm("statement") @Schema(implementation = UploadItemSchema.class) FileUpload file) throws IOException {
+    public Response importStatement(@RestPath String type, @RestPath AccountEnum account, @RestForm("statement") @Schema(implementation = UploadItemSchema.class) FileUpload file) throws IOException {
 
         var inputStream = Files.newInputStream(file.uploadedFile());
-        AccountEnum accountEnum = WebHelper.parseAccountEnum(account);
 
         switch (type) {
             case "csv":
-                importService.importCsv(accountEnum, inputStream, file.fileName());
+                importService.importCsv(account, inputStream, file.fileName());
                 break;
             case "excel":
-                importService.importExcel(accountEnum, inputStream, file.fileName());
+                importService.importExcel(account, inputStream, file.fileName());
             default:
                 throw new WebApplicationException(String.format("Invalid file type %s", type));
         }
