@@ -20,6 +20,10 @@ import java.util.Map;
 @ApplicationScoped
 public class AttachmentScenario {
 
+    public static final String TRANSACTION_DATE = "transaction_date";
+    public static final String TRANSACTION_OFFSET = "transaction_offset";
+    public static final String TRANSACTION_ACCOUNT = "transaction_account";
+
     @Inject
     ModifyService modifyService;
 
@@ -36,9 +40,9 @@ public class AttachmentScenario {
         }
 
         var fileMeta = new HashMap<String, Object>(Map.of(
-                "transaction_date", attachedTransaction.getDate(),
-                "transaction_offset", attachedTransaction.getOffset(),
-                "transaction_account", attachedTransaction.getAccount()
+                TRANSACTION_DATE, attachedTransaction.getDate(),
+                TRANSACTION_OFFSET, attachedTransaction.getOffset(),
+                TRANSACTION_ACCOUNT, attachedTransaction.getAccount()
         ));
         String attachmentId = attachmentService.save(fileMeta, inputStream, filename);
 
@@ -58,9 +62,9 @@ public class AttachmentScenario {
         }
         attachmentService.delete(attachmentId);
 
-        Date date = (Date)attachment.getMeta().get("transaction_date");
-        Integer offset = (Integer)attachment.getMeta().get("transaction_offset");
-        AccountEnum accountEnum = WebHelper.parseAccountEnum((String)attachment.getMeta().get("transaction_account"));
+        Date date = (Date)attachment.getMeta().get(TRANSACTION_DATE);
+        Integer offset = (Integer)attachment.getMeta().get(TRANSACTION_OFFSET);
+        AccountEnum accountEnum = WebHelper.parseAccountEnum((String)attachment.getMeta().get(TRANSACTION_ACCOUNT));
 
         modifyService.detachAttachment(date, offset, accountEnum, attachmentId);
     }
