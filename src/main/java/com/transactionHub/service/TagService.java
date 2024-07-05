@@ -13,7 +13,7 @@ public class TagService {
     @Inject
     TagRepository tagRepository;
 
-    public void createOrUpdte(Tag tag) {
+    public void createOrUpdate(Tag tag) {
         verifyTag(tag);
         tagRepository.persistOrUpdate(TagTranslator.mapToEntity(tag));
     }

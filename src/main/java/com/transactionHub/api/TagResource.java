@@ -4,8 +4,6 @@ import com.transactionHub.service.TagService;
 import com.transactionHub.transactionCoreLibrary.domain.Tag;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
-import jakarta.ws.rs.core.Response;
-import org.jboss.resteasy.reactive.ResponseStatus;
 
 @Path("/tag")
 public class TagResource {
@@ -25,7 +23,7 @@ public class TagResource {
 
     @POST
     public void createOrUpdate(Tag tag) {
-        tagService.createOrUpdte(tag);
+        tagService.createOrUpdate(tag);
     }
 
     @Path("{tag}")
