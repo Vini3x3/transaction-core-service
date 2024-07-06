@@ -28,7 +28,7 @@ public class AttachmentResource {
     public Response saveAttachment(@RestForm("date") Date date, @RestForm("offset") Integer offset, @RestForm("account") AccountEnum account, @RestForm("attachment") @Schema(implementation = UploadItemSchema.class) FileUpload file) throws IOException {
 
         var inputStream = Files.newInputStream(file.uploadedFile());
-        String attachmentId = attachmentScenario.saveAttachment(date, offset, account, inputStream, file.fileName());
+        String attachmentId = attachmentScenario.saveAttachment(date.toInstant(), offset, account, inputStream, file.fileName());
 
         return Response.accepted().entity(attachmentId).build();
     }

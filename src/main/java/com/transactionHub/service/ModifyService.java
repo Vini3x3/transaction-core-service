@@ -4,11 +4,9 @@ import com.transactionHub.repository.TransactionRepository;
 import com.transactionHub.transactionCoreLibrary.constant.AccountEnum;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 
 @ApplicationScoped
@@ -17,12 +15,12 @@ public class ModifyService {
     @Inject
     TransactionRepository transactionRepository;
 
-    public void addAttachment(Date date, int offset, AccountEnum accountEnum, String filename, String attachmentId) {
+    public void addAttachment(Instant date, int offset, AccountEnum accountEnum, String filename, String attachmentId) {
         var transaction = transactionRepository.findById(date, offset, accountEnum);
         var file = new HashMap<String, Object>();
         file.put("filename", filename);
         file.put("attachmentId", attachmentId);
-        file.put("updateDate", DateTime.now(DateTimeZone.UTC).toDate());
+        file.put("updateDate", Instant.now());
         if (transaction.attachments == null) {
             transaction.attachments = new ArrayList<>();
         }
@@ -30,7 +28,7 @@ public class ModifyService {
         transactionRepository.update(transaction);
     }
 
-    public void detachAttachment(Date date, int offset, AccountEnum accountEnum, String attachmentId) {
+    public void detachAttachment(Instant date, int offset, AccountEnum accountEnum, String attachmentId) {
         var transaction = transactionRepository.findById(date, offset, accountEnum);
         if (transaction.attachments == null) {
             transaction.attachments = new ArrayList<>();

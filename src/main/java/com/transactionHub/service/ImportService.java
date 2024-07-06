@@ -1,6 +1,5 @@
 package com.transactionHub.service;
 
-import com.transactionHub.util.helper.TransactionTranslator;
 import com.transactionHub.repository.TransactionRepository;
 import com.transactionHub.transactionCoreLibrary.constant.AccountEnum;
 import com.transactionHub.transactionCoreLibrary.constant.TagConstant;
@@ -14,11 +13,15 @@ import com.transactionHub.transactionProcessor.modifier.Tagger;
 import com.transactionHub.transactionProcessor.pipeline.ImportPipeline;
 import com.transactionHub.transactionProcessor.pipeline.MergePipeline;
 import com.transactionHub.util.config.ImportConfig;
+import com.transactionHub.util.helper.TransactionTranslator;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 import java.io.InputStream;
-import java.util.*;
+import java.time.Instant;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 @ApplicationScoped
@@ -75,8 +78,8 @@ public class ImportService {
         }
 
         AccountEnum account = importTransactions.getFirst().getAccount();
-        Date startDate = importTransactions.getFirst().getDate();
-        Date endDate = importTransactions.getLast().getDate();
+        Instant startDate = importTransactions.getFirst().getDate();
+        Instant endDate = importTransactions.getLast().getDate();
 
         var existingTransactions = repository.findTransactionsByDate(startDate, endDate, account)
                 .stream()

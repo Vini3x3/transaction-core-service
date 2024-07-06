@@ -3,10 +3,9 @@ package com.transactionHub.repository;
 import com.transactionHub.entity.Transaction;
 import com.transactionHub.transactionCoreLibrary.constant.AccountEnum;
 import io.quarkus.mongodb.panache.PanacheMongoRepository;
-import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +14,7 @@ import java.util.Map;
 @ApplicationScoped
 public class TransactionRepository implements PanacheMongoRepository<Transaction> {
 
-    public List<Transaction> findTransactionsByDate(Date start, Date end, AccountEnum account) {
+    public List<Transaction> findTransactionsByDate(Instant start, Instant end, AccountEnum account) {
         Map<String, Object> params = new HashMap<>();
         params.put("startDate", start);
         params.put("endDate", end);
@@ -26,7 +25,7 @@ public class TransactionRepository implements PanacheMongoRepository<Transaction
         return list(query, params);
     }
 
-    public Transaction findById(Date date, int offset, AccountEnum account) {
+    public Transaction findById(Instant date, int offset, AccountEnum account) {
         Map<String, Object> params = new HashMap<>();
         params.put("date", date);
         params.put("offset", offset);
