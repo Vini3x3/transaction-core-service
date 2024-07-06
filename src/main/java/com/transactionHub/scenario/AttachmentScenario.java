@@ -13,7 +13,7 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.NotFoundException;
 
 import java.io.InputStream;
-import java.util.Date;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,7 +33,7 @@ public class AttachmentScenario {
     @Inject
     AttachmentService attachmentService;
 
-    public String saveAttachment(Date date, int offset, AccountEnum account, InputStream inputStream, String filename) {
+    public String saveAttachment(Instant date, int offset, AccountEnum account, InputStream inputStream, String filename) {
         Transaction attachedTransaction = queryService.findTransactionById(date, offset, account);
         if (attachedTransaction == null) {
             throw new NotFoundException("transaction not found!");
@@ -62,7 +62,7 @@ public class AttachmentScenario {
         }
         attachmentService.delete(attachmentId);
 
-        Date date = (Date)attachment.getMeta().get(TRANSACTION_DATE);
+        Instant date = (Instant)attachment.getMeta().get(TRANSACTION_DATE);
         Integer offset = (Integer)attachment.getMeta().get(TRANSACTION_OFFSET);
         AccountEnum accountEnum = WebHelper.parseAccountEnum((String)attachment.getMeta().get(TRANSACTION_ACCOUNT));
 

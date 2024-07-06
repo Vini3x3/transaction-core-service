@@ -1,19 +1,18 @@
 package com.transactionHub.entity;
 
-import java.io.InputStream;
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.Map;
 
 public class Attachment {
     private byte[] content;
     private String filename;
-    private Date uploadDate;
+    private ZonedDateTime uploadDate;
     private Map<String, Object> meta;
 
     public Attachment() {
     }
 
-    public Attachment(String filename, Date uploadDate, Map<String, Object> meta, byte[] content) {
+    public Attachment(String filename, ZonedDateTime uploadDate, Map<String, Object> meta, byte[] content) {
         this.content = content;
         this.filename = filename;
         this.uploadDate = uploadDate;
@@ -36,11 +35,11 @@ public class Attachment {
         this.filename = filename;
     }
 
-    public Date getUploadDate() {
+    public ZonedDateTime getUploadDate() {
         return uploadDate;
     }
 
-    public void setUploadDate(Date uploadDate) {
+    public void setUploadDate(ZonedDateTime uploadDate) {
         this.uploadDate = uploadDate;
     }
 
@@ -51,5 +50,5 @@ public class Attachment {
     public void setMeta(Map<String, Object> meta) {
         this.meta = meta;
     }
-    
+
 }
