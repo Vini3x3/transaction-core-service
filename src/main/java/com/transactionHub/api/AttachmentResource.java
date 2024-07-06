@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Date;
 
+import static com.transactionHub.util.helper.WebHelper.convertToInstant;
+
 @Path("/attachment")
 public class AttachmentResource {
 
@@ -28,7 +30,7 @@ public class AttachmentResource {
     public Response saveAttachment(@RestForm("date") Date date, @RestForm("offset") Integer offset, @RestForm("account") AccountEnum account, @RestForm("attachment") @Schema(implementation = UploadItemSchema.class) FileUpload file) throws IOException {
 
         var inputStream = Files.newInputStream(file.uploadedFile());
-        String attachmentId = attachmentScenario.saveAttachment(date.toInstant(), offset, account, inputStream, file.fileName());
+        String attachmentId = attachmentScenario.saveAttachment(convertToInstant(date), offset, account, inputStream, file.fileName());
 
         return Response.accepted().entity(attachmentId).build();
     }
