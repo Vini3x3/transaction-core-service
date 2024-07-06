@@ -5,7 +5,11 @@ import io.quarkus.mongodb.panache.common.MongoEntity;
 import org.bson.codecs.pojo.annotations.BsonId;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.time.Instant;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 @MongoEntity(collection="transactions")
 public class Transaction  {
@@ -22,7 +26,7 @@ public class Transaction  {
 
 
     public static class CompositeId implements Comparable<CompositeId>{
-        public Date date;
+        public Instant date;
         public int offset;
         public AccountEnum account;
 

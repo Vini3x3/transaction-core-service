@@ -14,6 +14,7 @@ import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import java.io.InputStream;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -48,7 +49,8 @@ public class AttachmentRepository {
             } else {
                 meta = new HashMap<>();
             }
-            return new Attachment(file.getFilename(), file.getUploadDate(), meta, content);
+            
+            return new Attachment(file.getFilename(), file.getUploadDate().toInstant().atZone(ZoneId.of("UTC")), meta, content);
         }
     }
 
