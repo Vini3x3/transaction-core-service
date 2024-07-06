@@ -5,6 +5,7 @@ import com.transactionHub.transactionCoreLibrary.constant.AccountEnum;
 import com.transactionHub.transactionCoreLibrary.domain.Transaction;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;
 import org.jboss.resteasy.reactive.RestPath;
@@ -22,6 +23,16 @@ public class QueryResource {
     @GET
     public List<Transaction> findByDateRange(@QueryParam("start") Date start, @QueryParam("end") Date end, @QueryParam("account") AccountEnum account) {
         return queryService.findTransactionsByDate(start, end, account);
+    }
+
+    @Path("id")
+    @GET
+    public Transaction findById(@QueryParam("date") Date date, @QueryParam("offset") Integer offset, @QueryParam("account") AccountEnum account) {
+        Transaction transaction = queryService.findTransactionById(date, offset, account);
+        if (transaction == null) {
+            throw new NotFoundException("transaction not found");
+        }
+        return transaction;
     }
 
 }
