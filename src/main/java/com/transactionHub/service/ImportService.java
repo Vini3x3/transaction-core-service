@@ -62,6 +62,7 @@ public class ImportService {
                 mapperConfig.descriptionHeader(),
                 mapperConfig.withdrawalHeader(),
                 mapperConfig.depositHeader(),
+                mapperConfig.deltaHeader().orElse("NOT SET"),
                 mapperConfig.balanceHeader(),
                 mapperConfig.account(),
                 mapperConfig.datePattern()

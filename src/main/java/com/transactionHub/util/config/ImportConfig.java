@@ -4,6 +4,7 @@ import com.transactionHub.transactionCoreLibrary.constant.AccountEnum;
 import io.smallrye.config.ConfigMapping;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 @ConfigMapping(prefix = "import")
@@ -23,6 +24,7 @@ public interface ImportConfig {
         String descriptionHeader();
         String withdrawalHeader();
         String depositHeader();
+        Optional<String> deltaHeader();
         String balanceHeader();
         AccountEnum account();
         String datePattern();
