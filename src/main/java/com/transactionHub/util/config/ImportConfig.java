@@ -17,17 +17,23 @@ public interface ImportConfig {
         Map<String, Map<String, Set<String>>> systemTaggerConfig();
 
         MapperConfig mapperConfig();
+
+        ExtractorConfig extractorConfig();
     }
 
     interface MapperConfig {
         String dateHeader();
         String descriptionHeader();
-        String withdrawalHeader();
-        String depositHeader();
+        Optional<String> withdrawalHeader();
+        Optional<String> depositHeader();
         Optional<String> deltaHeader();
         String balanceHeader();
         AccountEnum account();
         String datePattern();
+    }
+
+    interface ExtractorConfig {
+        Optional<Character> delimiter();
     }
 
 }

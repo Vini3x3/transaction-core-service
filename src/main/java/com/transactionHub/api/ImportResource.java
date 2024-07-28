@@ -35,15 +35,8 @@ public class ImportResource {
 
         var inputStream = Files.newInputStream(file.uploadedFile());
 
-        switch (type) {
-            case "csv":
-                importService.importCsv(account, inputStream, file.fileName());
-                break;
-            case "excel":
-                importService.importExcel(account, inputStream, file.fileName());
-            default:
-                throw new WebApplicationException(String.format("Invalid file type %s", type));
-        }
+        importService.importData(account, type, file.fileName(), inputStream);
+
         return Response.accepted().build();
     }
 
