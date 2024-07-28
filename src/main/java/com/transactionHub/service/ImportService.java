@@ -49,8 +49,8 @@ public class ImportService {
         var mapper = new TransactionMapper(
                 mapperConfig.dateHeader(),
                 mapperConfig.descriptionHeader(),
-                mapperConfig.withdrawalHeader(),
-                mapperConfig.depositHeader(),
+                mapperConfig.withdrawalHeader().orElse(""),
+                mapperConfig.depositHeader().orElse(""),
                 mapperConfig.deltaHeader().orElse("NOT SET"),
                 mapperConfig.balanceHeader(),
                 mapperConfig.account(),

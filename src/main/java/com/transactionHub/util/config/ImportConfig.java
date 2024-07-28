@@ -24,8 +24,8 @@ public interface ImportConfig {
     interface MapperConfig {
         String dateHeader();
         String descriptionHeader();
-        String withdrawalHeader();
-        String depositHeader();
+        Optional<String> withdrawalHeader();
+        Optional<String> depositHeader();
         Optional<String> deltaHeader();
         String balanceHeader();
         AccountEnum account();
