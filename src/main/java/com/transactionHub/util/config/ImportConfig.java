@@ -17,6 +17,8 @@ public interface ImportConfig {
         Map<String, Map<String, Set<String>>> systemTaggerConfig();
 
         MapperConfig mapperConfig();
+
+        ExtractorConfig extractorConfig();
     }
 
     interface MapperConfig {
@@ -28,6 +30,10 @@ public interface ImportConfig {
         String balanceHeader();
         AccountEnum account();
         String datePattern();
+    }
+
+    interface ExtractorConfig {
+        Optional<Character> delimiter();
     }
 
 }

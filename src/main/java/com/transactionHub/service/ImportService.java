@@ -5,8 +5,7 @@ import com.transactionHub.transactionCoreLibrary.constant.AccountEnum;
 import com.transactionHub.transactionCoreLibrary.constant.TagConstant;
 import com.transactionHub.transactionCoreLibrary.domain.Transaction;
 import com.transactionHub.transactionProcessor.extractor.Extractor;
-import com.transactionHub.transactionProcessor.extractor.csv.CsvExtractor;
-import com.transactionHub.transactionProcessor.extractor.excel.ExcelExtractor;
+import com.transactionHub.transactionProcessor.extractor.ExtractorFactory;
 import com.transactionHub.transactionProcessor.mapper.transaction.TransactionMapper;
 import com.transactionHub.transactionProcessor.modifier.SystemTagger;
 import com.transactionHub.transactionProcessor.modifier.Tagger;
@@ -33,28 +32,18 @@ public class ImportService {
     @Inject
     ImportConfig importConfig;
 
-    public void importCsv(AccountEnum account, InputStream inputStream, String filename) {
-        var extractor = new CsvExtractor();
-        importData(inputStream, filename, extractor, account);
-    }
-
-    public void importExcel(AccountEnum accountEnum, InputStream inputStream, String filename) {
-        var extractor = new ExcelExtractor();
-        importData(inputStream, filename, extractor, accountEnum);
-    }
-
-    public void importData(InputStream inputStream, String filename, Extractor extractor, AccountEnum account) {
-        var importTransactions = parseData(inputStream, filename, extractor, importConfig.account().get(account));
+    public void importData(AccountEnum account, String fileType, String filename, InputStream inputStream) {
+        var importTransactions = parseData(inputStream, filename, fileType, importConfig.account().get(account));
         var mergedTransactions = mergeVirtualTransaction(importTransactions);
 
         var entities = mergedTransactions.stream()
                 .map(TransactionTranslator::mapToEntity).toList();
 
         repository.persistOrUpdate(entities);
-
     }
 
-    protected List<Transaction> parseData(InputStream inputStream, String filename, Extractor extractor, ImportConfig.Pipeline pipelineConfig) {
+    protected List<Transaction> parseData(InputStream inputStream, String filename, String fileType, ImportConfig.Pipeline pipelineConfig) {
+        ImportConfig.ExtractorConfig extractorConfig = pipelineConfig.extractorConfig();
         Map<String, Set<String>> taggerConfig = pipelineConfig.taggerConfig();
         ImportConfig.MapperConfig mapperConfig = pipelineConfig.mapperConfig();
         var mapper = new TransactionMapper(
@@ -67,6 +56,7 @@ public class ImportService {
                 mapperConfig.account(),
                 mapperConfig.datePattern()
         );
+        var extractor = createExtractor(extractorConfig, fileType);
         var tagger = new Tagger(taggerConfig);
         var systemTagger = new SystemTagger(pipelineConfig.systemTaggerConfig());
         var importPipeline = new ImportPipeline(extractor, mapper, tagger, systemTagger);
@@ -92,7 +82,7 @@ public class ImportService {
         }
 
         var toBeDeleted = existingTransactions.stream().filter(o -> {
-            for (var t: importTransactions) {
+            for (var t : importTransactions) {
                 if (o.getDate().equals(t.getDate()) & o.getOffset().equals(t.getOffset()) && o.getAccount().equals(t.getAccount())) {
                     return false;
                 }
@@ -100,7 +90,7 @@ public class ImportService {
             return true;
         }).toList();
 
-        for (var t: toBeDeleted) {
+        for (var t : toBeDeleted) {
             repository.delete(TransactionTranslator.mapToEntity(t));
         }
 
@@ -108,5 +98,11 @@ public class ImportService {
 
         return new MergePipeline().mergeData(importTransactions, virtualTransactions);
     }
+
+    private Extractor createExtractor(ImportConfig.ExtractorConfig extractorConfig, String fileType) {
+        var delimiter = extractorConfig.delimiter();
+        return delimiter.map(character -> ExtractorFactory.create(fileType, character)).orElseGet(() -> ExtractorFactory.create(fileType));
+    }
+
 
 }
